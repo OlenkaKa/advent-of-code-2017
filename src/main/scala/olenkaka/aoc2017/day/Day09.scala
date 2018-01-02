@@ -1,8 +1,6 @@
-package olenkaka.aoc2017.day09
+package olenkaka.aoc2017.day
 
-import scala.io.Source
-
-object Day09App {
+object Day09 {
 
   private val garbageRegex = """<(([^>!]|!.)*)>""".r
   private val groupRegex = """\{(.*)\}""".r
