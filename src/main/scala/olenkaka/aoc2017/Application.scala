@@ -1,6 +1,6 @@
 package olenkaka.aoc2017
 
-import olenkaka.aoc2017.day.DayFactory
+import olenkaka.aoc2017.day.Day
 
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
@@ -10,8 +10,8 @@ object Application extends App {
   try {
     require(args.length >= 1, "at least one argument required")
 
-    val day = DayFactory.create(args(0).toInt)
-    val fileSource = if (args.length >= 2) Source.fromFile(args(1)) else day.input
+    val day = Day.create(args(0).toInt)
+    val fileSource = if (args.length >= 2) Source.fromResource(args(1)) else day.input
     val input = fileSource.getLines.filter(_.nonEmpty).map(_.trim).toList
     fileSource.close
 

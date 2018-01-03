@@ -1,77 +1,60 @@
 package olenkaka.aoc2017.day
 
-import scala.io.Source
+import scala.annotation.tailrec
+import scala.util.Try
 
-object Day10 {
-  //extends App {
-  private val adder: List[Int] = List(17, 31, 73, 47, 23)
+object Day10 extends Day[Int, String] {
 
-  def main(args: Array[String]): Unit = {
-    val lengths = Source.fromFile(args(0)).getLines.mkString.split(",").map(s => s.trim.toInt)
-    //        val lengths = "3,4,1,5".split(",").map(_.toInt)
-    val list = List.range(0, 256)
-    println("-- Part One --")
-    val hashList = hash(list, lengths.toList, 0, 0)
-    println(hashList.head * hashList(1))
+  override val inputName: String = "Day10-input"
 
-    println("-- Part Two --")
-    println(hashList.length)
-    val newLengths: List[Int] = lengths.toList ::: adder
-    println(newLengths)
-    val l = List(65, 27, 9, 1, 4, 3, 40, 50, 91, 7, 6, 0, 2, 5, 68, 22,
-      65, 27, 9, 1, 4, 3, 40, 50, 91, 7, 6, 0, 2, 5, 68, 22)
-    println(denseHash(l))
-    val dense = denseHash(l)
-    println(List(64, 7, 255)
-      .map(n => String.format("%2s", n.toHexString).replace(" ", "0"))
-      .mkString
-    )
-    val ll = List(1, 2, 3)
-    println(knotHash(list, ll ::: adder, 0, 0, 64))
+  private val range = List.range(0, 256)
+  private val lengthsAppendix: List[Int] = List(17, 31, 73, 47, 23)
+
+  override def part1(inputLines: Seq[String]): Try[Int] = Try {
+    val lengths = getLengths(inputLines)
+    val (hashResult, _, _) = hash(range, lengths, 0, 0)
+    hashResult.head * hashResult(1)
   }
 
-  def asciiList(list: List[Int]): List[Int] = {
-    list.map(_.toString).mkString(",").map(_.toInt).toList
-    //    list.map(s => (DatatypeConverter.parseHexBinary(s.toString).toString.toInt, 44)).flatten ::: List(17, 31, 73, 47, 23)
+  override def part2(inputLines: Seq[String]): Try[String] = Try {
+    val lengths = getLengths(inputLines).map(_.toString).mkString(",").map(_.toInt).toList ::: lengthsAppendix
+    knotHash(range, lengths)
   }
 
-  def denseHash(list: List[Int]): List[Int] = {
-    list.grouped(16).map(_.reduce(_ ^ _)).toList
+  private def getLengths(inputLines: Seq[String]): List[Int] = inputLines.mkString
+    .split(",")
+    .filter(!_.isEmpty)
+    .map(s => s.trim.toInt)
+    .toList
+
+  private def knotHash(values: List[Int], lengths: List[Int]): String = {
+
+    @tailrec
+    def roundsHash(currentValues: List[Int], position: Int, skipSize: Int, rounds: Int): List[Int] = {
+      rounds match {
+        case 0 => currentValues
+        case _ =>
+          val (newValues, newPosition, newSkipSize) = hash(currentValues, lengths, position, skipSize)
+          roundsHash(newValues, newPosition, newSkipSize, rounds - 1)
+      }
+    }
+
+    roundsHash(values, 0, 0, 64)
+      .grouped(16).map(_.reduce(_ ^ _))
+      .map(n => "%02x".format(n)).mkString
   }
 
-  def hash(list: List[Int], lengths: List[Int], position: Int, skipSize: Int): List[Int] = {
-    if (lengths.isEmpty)
-      list
-    else {
-      hash(reverse(list, position, lengths.head),
-        lengths.tail,
-        (position + lengths.head + skipSize) % list.length,
+  private def hash(values: List[Int], lengths: List[Int], position: Int, skipSize: Int): (List[Int], Int, Int) = {
+    lengths match {
+      case Nil => (values, position, skipSize)
+      case length :: lengthsTail => hash(reverse(values, position, length),
+        lengthsTail,
+        (position + length + skipSize) % values.length,
         skipSize + 1)
     }
   }
 
-  def modhash(list: List[Int], lengths: List[Int], position: Int, skipSize: Int): (List[Int], Int, Int) = {
-    if (lengths.isEmpty)
-      (list, position, skipSize)
-    else {
-      modhash(reverse(list, position, lengths.head),
-        lengths.tail,
-        (position + lengths.head + skipSize) % list.length,
-        skipSize + 1)
-    }
-  }
-
-  def knotHash(list: List[Int], lengths: List[Int], position: Int, skipSize: Int, counter: Int): String = {
-    counter match {
-      case 0 => denseHash(list)
-        .map(n => String.format("%2s", n.toHexString).replace(" ", "0"))
-        .mkString
-      case n => val hashResult = modhash(list, lengths, position, skipSize)
-        knotHash(hashResult._1, lengths, hashResult._2, hashResult._3, counter - 1)
-    }
-  }
-
-  def reverse(list: List[Int], position: Int, length: Int): List[Int] = {
+  private def reverse(list: List[Int], position: Int, length: Int): List[Int] = {
     val listLength = list.length
     if (position + length > listLength) {
       val endSublist = list.slice(position, listLength)

@@ -2,17 +2,19 @@ package olenkaka.aoc2017.day
 
 import scala.util.Try
 
-object Day01 extends Day {
+object Day01 extends Day[Int, Int] {
 
-  override def part1(inputLines: Seq[String]): Try[Any] = Try({
+  override val inputName: String = "Day01-input"
+
+  override def part1(inputLines: Seq[String]): Try[Int] = Try {
     val input = getInput(inputLines)
     calculateCaptcha(input, 1)
-  })
+  }
 
-  override def part2(inputLines: Seq[String]): Try[Any] = Try({
+  override def part2(inputLines: Seq[String]): Try[Int] = Try {
     val input = getInput(inputLines)
     calculateCaptcha(input, input.length / 2)
-  })
+  }
 
   private def getInput(inputLines: Seq[String]) = inputLines.mkString.map(_.toString.toInt)
 
