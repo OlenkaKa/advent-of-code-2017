@@ -1,5 +1,7 @@
 package olenkaka.aoc2017.day
 
+import scala.io.Source
+
 object Day09 {
 
   private val garbageRegex = """<(([^>!]|!.)*)>""".r

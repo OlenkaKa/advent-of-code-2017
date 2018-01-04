@@ -10,6 +10,7 @@ object Day {
     val day = num match {
       case 1 => Day01
       case 10 => Day10
+      case 14 => Day14
     }
     day.asInstanceOf[Day[T1, T2]]
   }

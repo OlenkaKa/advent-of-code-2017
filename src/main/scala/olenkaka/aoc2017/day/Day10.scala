@@ -17,7 +17,11 @@ object Day10 extends Day[Int, String] {
   }
 
   override def part2(inputLines: Seq[String]): Try[String] = Try {
-    val lengths = getLengths(inputLines).map(_.toString).mkString(",").map(_.toInt).toList ::: lengthsAppendix
+    knotHash(getLengths(inputLines).map(_.toString).mkString(","))
+  }
+
+  def knotHash(input: String): String = {
+    val lengths = input.map(_.toInt).toList ::: lengthsAppendix
     knotHash(range, lengths)
   }
 
