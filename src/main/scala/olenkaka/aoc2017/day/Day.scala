@@ -13,6 +13,7 @@ object Day {
       case 14 => Day14
       case 15 => Day15
       case 16 => Day16
+      case 17 => Day17
     }
     day.asInstanceOf[Day[T1, T2]]
   }
