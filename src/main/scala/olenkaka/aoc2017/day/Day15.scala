@@ -3,7 +3,7 @@ package olenkaka.aoc2017.day
 import scala.annotation.tailrec
 import scala.util.Try
 
-object Day15 extends Day[Any, Any] {
+object Day15 extends Day[Int, Any] {
 
   override val inputName: String = "Day15-input"
 
@@ -15,8 +15,6 @@ object Day15 extends Day[Any, Any] {
   override def part1(inputLines: Seq[String]): Try[Int] = Try {
     countMatches(getFirstPair(inputLines), 40000000, 0)
   }
-
-  override def part2(inputLines: Seq[String]): Try[Int] = ???
 
   private def getFirstPair(inputLines: Seq[String]) = {
     def noValueError(gen: Char) = throw new IllegalArgumentException("Value for " + gen + " generator not defined")
