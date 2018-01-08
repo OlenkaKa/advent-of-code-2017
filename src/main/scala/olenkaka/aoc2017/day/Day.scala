@@ -3,12 +3,12 @@ package olenkaka.aoc2017.day
 import scala.io.{BufferedSource, Source}
 import scala.util.Try
 
-
 object Day {
   def create[T1, T2](num: Int): Day[T1, T2] = {
     require(num >= 1 && num <= 25, s"day $num is invalid - it must be from range 1-25")
     val day = num match {
       case 1 => Day01
+      case 2 => Day02
       case 10 => Day10
       case 14 => Day14
       case 15 => Day15
@@ -16,6 +16,7 @@ object Day {
       case 17 => Day17
       case 18 => Day18
       case 19 => Day19
+      case 20 => Day20
     }
     day.asInstanceOf[Day[T1, T2]]
   }
