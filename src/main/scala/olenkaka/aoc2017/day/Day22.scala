@@ -4,6 +4,7 @@ import scala.annotation.tailrec
 import scala.util.Try
 
 object Day22 extends Day[Int, Int] {
+
   override protected val inputName: String = "Day22-input"
 
   override def part1(inputLines: Seq[String]): Try[Int] = Try {
@@ -12,12 +13,14 @@ object Day22 extends Day[Int, Int] {
     def virusWalk(grid: Grid, index: (Int, Int), direction: Direction, iterations: Int, infections: Int): Int = {
       if (iterations == 0) {
         infections
-      } else if (grid.contains(index)) {
+
+      } else if (grid.infected.contains(index)) {
         val newDir = direction + Right
-        virusWalk(grid - index, newDir + index, newDir, iterations - 1, infections)
+        virusWalk(grid.copy(infected = grid.infected - index), newDir + index, newDir, iterations - 1, infections)
+
       } else {
         val newDir = direction + Left
-        virusWalk(grid + index, newDir + index, newDir, iterations - 1, infections + 1)
+        virusWalk(grid.copy(infected = grid.infected + index), newDir + index, newDir, iterations - 1, infections + 1)
       }
     }
 
@@ -25,8 +28,33 @@ object Day22 extends Day[Int, Int] {
   }
 
   override def part2(inputLines: Seq[String]): Try[Int] = Try {
-    // TODO
-    0
+    @tailrec
+    def virusWalk(grid: Grid, index: (Int, Int), direction: Direction, iterations: Int, infections: Int): Int = {
+      if (iterations == 0) {
+        infections
+
+      } else if (grid.infected.contains(index)) {
+        val newDir = direction + Right
+        virusWalk(grid.copy(infected = grid.infected - index, flagged = grid.flagged + index),
+          newDir + index, newDir, iterations - 1, infections)
+
+      } else if (grid.weakened.contains(index)) {
+        val newDir = direction + Up
+        virusWalk(grid.copy(weakened = grid.weakened - index, infected = grid.infected + index),
+          newDir + index, newDir, iterations - 1, infections + 1)
+
+      } else if (grid.flagged.contains(index)) {
+        val newDir = direction + Down
+        virusWalk(grid.copy(flagged = grid.flagged - index), newDir + index, newDir, iterations - 1, infections)
+
+      } else {
+        val newDir = direction + Left
+        virusWalk(grid.copy(weakened = grid.weakened + index),
+          newDir + index, newDir, iterations - 1, infections)
+      }
+    }
+
+    virusWalk(initGrid(inputLines), (0, 0), Up, 10000000, 0)
   }
 
   private def initGrid(inputLines: Seq[String]): Grid = {
@@ -34,16 +62,17 @@ object Day22 extends Day[Int, Int] {
     val (dimX, dimY) = (lines.map(_.length).max, lines.size)
     val (rangeX, rangeY) = (dimX / 2, dimY / 2)
 
-    (lines zip (rangeY to -rangeY by -1))
+    val infected = (lines zip (rangeY to -rangeY by -1))
       .flatMap {
         case (l, y) => (l zip (-rangeX to rangeX))
           .filter(i => i._1 == '#')
           .map(i => (i._2, y))
       }
       .toSet
+    Grid(Set(), infected, Set())
   }
 
-  private type Grid = Set[(Int, Int)]
+  private case class Grid(weakened: Set[(Int, Int)], infected: Set[(Int, Int)], flagged: Set[(Int, Int)])
 
   private trait Direction {
     val forward: (Int, Int)
