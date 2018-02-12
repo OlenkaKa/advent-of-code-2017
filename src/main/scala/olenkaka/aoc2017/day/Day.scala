@@ -4,9 +4,9 @@ import scala.io.{BufferedSource, Source}
 import scala.util.Try
 
 object Day {
-  def create[T1, T2](num: Int): Day[T1, T2] = {
+  def apply[T1, T2](num: Int): Day[T1, T2] = {
     require(num >= 1 && num <= 25, s"day $num is invalid - it must be from range 1-25")
-    val day = num match {
+    (num match {
       case 1 => Day01
       case 2 => Day02
       case 10 => Day10
@@ -20,8 +20,8 @@ object Day {
       case 21 => Day21
       case 22 => Day22
       case 23 => Day23
-    }
-    day.asInstanceOf[Day[T1, T2]]
+      case 24 => Day24
+    }).asInstanceOf[Day[T1, T2]]
   }
 }
 
