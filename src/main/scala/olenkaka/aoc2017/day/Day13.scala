@@ -1,12 +1,14 @@
 package olenkaka.aoc2017.day
 
-import scala.io.Source
+import scala.util.Try
 
-object Day13 {
+object Day13 extends Day[Int, Any] {
+
+  override protected val inputName: String = "Day13-input"
 
   private val regex = """^\s*(\d+)\s*:\s*(\d+)\s*$""".r
 
-  class Scanner(configuration: List[(Int, Int)]) {
+  private class Scanner(configuration: List[(Int, Int)]) {
 
     private val _configuration = configuration
     private var _state: List[(Int, Int)] = configuration.map(_ => (0, 1))
@@ -42,9 +44,8 @@ object Day13 {
     }
   }
 
-  def main(args: Array[String]): Unit = {
-    val scanner = new Scanner(Source.fromFile(args(0)).getLines
-      .filter(_.nonEmpty)
+  override def part1(inputLines: Seq[String]): Try[Int] = Try {
+    val scanner = new Scanner(inputLines.filter(_.nonEmpty)
       .map {
         case regex(depth, range) => (depth.toInt, range.toInt)
         case _ => throw new IllegalArgumentException("Invalid input")
@@ -57,7 +58,6 @@ object Day13 {
       }
       scanner.update()
     }
-
-    println(result)
+    result
   }
 }

@@ -2,8 +2,10 @@ package olenkaka.aoc2017.day
 
 import scala.util.Try
 
-object Day24 extends Day[Int, Any] {
+object Day24 extends Day[Int, Int] {
+
   override protected val inputName: String = "Day24-input"
+
   private val components = "(\\d+)/(\\d+)".r
 
   private type Port = Int
@@ -12,6 +14,14 @@ object Day24 extends Day[Int, Any] {
 
   override def part1(inputLines: Seq[String]): Try[Int] = Try {
     findBridges(createComponents(inputLines))
+      .map(b => b.map(c => c._1 + c._2).sum)
+      .max
+  }
+
+  override def part2(inputLines: Seq[String]): Try[Int] = Try {
+    findBridges(createComponents(inputLines))
+      .groupBy(b => b.length)
+      .maxBy(_._2.head.length)._2
       .map(b => b.map(c => c._1 + c._2).sum)
       .max
   }
