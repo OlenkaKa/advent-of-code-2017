@@ -11,6 +11,7 @@ object Day {
       case 2 => Day02
       case 4 => Day04
       case 10 => Day10
+      case 12 => Day12
       case 14 => Day14
       case 15 => Day15
       case 16 => Day16
