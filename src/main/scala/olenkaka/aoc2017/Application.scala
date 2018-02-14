@@ -8,11 +8,17 @@ import scala.util.{Failure, Success, Try}
 object Application extends App {
 
   try {
-    require(args.length >= 1, "at least one argument required")
+    require(args.length >= 1, "Missing day number")
 
-    val day = Day.create(args(0).toInt)
-    val fileSource = if (args.length >= 2) Source.fromResource(args(1)) else day.input
-    val input = fileSource.getLines.filter(_.nonEmpty).map(_.trim).toList
+    val day = Day(args(0).toInt)
+    val fileSource = if (args.length >= 2) {
+      Source.fromFile(args(1))
+    } else {
+      println("Using default day input")
+      day.input
+    }
+
+    val input = fileSource.getLines.toList
     fileSource.close
 
     println("--- Part One ---")
@@ -21,12 +27,12 @@ object Application extends App {
     printResult(day.part2(input))
 
   } catch {
-    case e: Exception => println(e)
+    case e: IllegalArgumentException => println(e.getLocalizedMessage)
   }
 
-  def printResult(result: Try[Any]): Unit = {
+  def printResult[T](result: Try[T]): Unit = {
     result match {
-      case Failure(e) => println(e)
+      case Failure(e) => println("Unable to calculate the result: " + e)
       case Success(s) => println(s)
     }
   }

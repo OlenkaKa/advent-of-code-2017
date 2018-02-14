@@ -9,6 +9,7 @@ object Day {
     (num match {
       case 1 => Day01
       case 2 => Day02
+      case 4 => Day04
       case 10 => Day10
       case 14 => Day14
       case 15 => Day15
@@ -21,6 +22,7 @@ object Day {
       case 22 => Day22
       case 23 => Day23
       case 24 => Day24
+      case 25 => Day25
     }).asInstanceOf[Day[T1, T2]]
   }
 }
